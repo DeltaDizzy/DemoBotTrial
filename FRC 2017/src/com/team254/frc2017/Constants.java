@@ -79,27 +79,39 @@ public class Constants extends ConstantsBase {
     // Port assignments should match up with the spreadsheet here:
     // https://docs.google.com/spreadsheets/d/12_Mrd6xKmxCjKtsWNpWZDqT7ukrB9-1KKFCuRrO4aPM/edit#gid=0
 
-    /* TALONS */
-    // (Note that if multiple talons are dedicated to a mechanism, any sensors
-    // are attached to the master)
-
-    // Drive
-   /* public static final int kLeftDriveMasterId = 12;
-    public static final int kLeftDriveSlaveId = 11;
-    public static final int kRightDriveMasterId = 3;
-    public static final int kRightDriverSlaveId = 4;*/
-
-  
+    // Drive ports
+    public static final int kLeftDriveMasterPort = 0;
+    public static final int kRightDriveMasterPort = 1;
+    
+    //FEEDER
+    public static final int kFeederTriggerPort = 2; //trigger motor port
+    
+    public static final int kFeederIRInitialPort = 0;  //ports for IR's
+    public static final int kFeederIRFinalPort = 1;
+    
+    //Threshold values for ir: (in volts i think)
+    public static final double kFeederIRInitialMax = 4.0;
+    public static final double kFeederIRInitialMin = 2.0;
+    
+    public static final double kFeederIRFinalMax = 4.0;
+    public static final double kFeederIRFinalMin = 2.0;
+    
+    //Feeder Constants
+    public static final double kFeederUnjamPeriod = .4;
+    public static final double kFeederUnjamPower = -.75;
+    public static final double kFeederClogPeriod = 2;
+    public static final double kFeederIncrementFeedPower = 1.0;
+    public static final double kFeederContinuousFeedPower = 1.0;
+    
+    
+    
    
     // Analog Inputs
     //public static int kLEDOnId = 2;
 
-    // Digital Outputs
-    public static int kGreenLEDId = 9;
-    public static int kRangeLEDId = 8;
+    
 
-    // Phone
-    //public static int kAndroidAppTcpPort = 8254;
+   
 
     // Path following constants
     public static double kMinLookAhead = 12.0; // inches
@@ -126,49 +138,12 @@ public class Constants extends ConstantsBase {
 
    
    
-    /**
-     * Make an {@link Solenoid} instance for the single-number ID of the solenoid
-     * 
-     * @param solenoidId
-     *            One of the kXyzSolenoidId constants
-     */
-    public static Solenoid makeSolenoidForId(int solenoidId) {
-        return new Solenoid(solenoidId / 8, solenoidId % 8);
-    }
+    
 
     @Override
     public String getFileLocation() {
         return "~/constants.txt";
     }
 
-    /**
-     * @return the MAC address of the robot
-     */
-    public static String getMACAddress() {
-        try {
-            Enumeration<NetworkInterface> nwInterface = NetworkInterface.getNetworkInterfaces();
-            StringBuilder ret = new StringBuilder();
-            while (nwInterface.hasMoreElements()) {
-                NetworkInterface nis = nwInterface.nextElement();
-                if (nis != null) {
-                    byte[] mac = nis.getHardwareAddress();
-                    if (mac != null) {
-                        for (int i = 0; i < mac.length; i++) {
-                            ret.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-                        }
-                        return ret.toString();
-                    } else {
-                        System.out.println("Address doesn't exist or is not accessible");
-                    }
-                } else {
-                    System.out.println("Network Interface for the specified address is not found.");
-                }
-            }
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
+   
 }

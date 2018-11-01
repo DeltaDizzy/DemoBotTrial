@@ -6,6 +6,11 @@ public class NidecMotor {
         Only_PWM
     }
     
+    public NidecMotor(int port) {
+        
+    }
+    
+    
     public void changeControlMode(NidecControlMode m) {
         
     }
