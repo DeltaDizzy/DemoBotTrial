@@ -83,7 +83,7 @@ public class Constants extends ConstantsBase {
     public static final int kLeftDriveMasterPort = 0;
     public static final int kRightDriveMasterPort = 1;
     
-    //FEEDER
+    //FEEDER ------------------------------------------------------
     public static final int kFeederTriggerPort = 2; //trigger motor port
     
     public static final int kFeederIRInitialPort = 0;  //ports for IR's
@@ -105,10 +105,36 @@ public class Constants extends ConstantsBase {
     
     
     
-   
-    // Analog Inputs
-    //public static int kLEDOnId = 2;
+    
+    
+    
+    //INTAKE ------------------------------------------------------------
+    public static final int kIntakeRollerPort = 3;  //roller motor port
+    
+    public static final int kIntakeIRHopperPort = 2;  //hopper full IR port
 
+  //Threshold values for ir: (in volts i think)
+    public static final double kIntakeRollerMax = 4.0;
+    public static final double kIntakeRollerMin = 2.0;
+    
+    //Intake Constants
+    public static final double kIntakeUnjamPeriod = .4;
+    public static final double kIntakeUnjamPower = -.75;    
+    public static final double kIntakePower = 1.0;
+   
+    public static final double kHopperSensePeriod=1;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 
    
