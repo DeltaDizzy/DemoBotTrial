@@ -15,7 +15,7 @@ import java.util.Arrays;
  * The feeder subsystem consists of a 3.3 Nidec Brushless motor used to intake balls from the ground
  * There are ir sensors placed across the top of the hopper to sense if the hopper is full.
  * The mechanism is also lowered by 2 servo linear actuators.
- * The main things this subsystem has to are intake fuel, unjam, and lower and raise the mechanism. 
+ * The main things this subsystem has to do are intake balls, unjam itself, and lower and raise the mechanism. 
  * 
  * @see Subsystem.java
  */
@@ -23,9 +23,9 @@ public class Intake extends Subsystem {
     
    
 
-    private static Intake sInstance = null;
+    private static Intake sInstance = null; //Create null instance
 
-    public static Intake getInstance() {
+    public static Intake getInstance() { //Initalize instance
         if (sInstance == null) {
             sInstance = new Intake();
         }
@@ -35,61 +35,63 @@ public class Intake extends Subsystem {
     private final NidecMotor mRoller;
     private final IRSensor mIRAcross;
     
-    public Intake() {
+    public Intake() { //Initialize part constants
         mRoller=new NidecMotor(Constants.kIntakeRollerPort);
         mRoller.changeControlMode(NidecControlMode.Only_PWM);
        
         mIRAcross = new IRSensor(Constants.kIntakeIRHopperPort, Constants.kIntakeRollerMin, Constants.kIntakeRollerMax);
           
     }
-
+    
+    //SystemState defines the possible states for the intake, and is set to the wanted state when a change is needed
     public enum SystemState {
         ACCUMULATING, //feed a ball at a time
         UNJAMMING, //Reverses motors continuously
         IDLE, // stop all motors
     }   //lowering and raising just a separate thing
 
-    public enum WantedState {
+    public enum WantedState { //Possible states that SystemState can be set to
         IDLE,
         UNJAM,
         INTAKE
     }
-
+    
+    //Current state is idle, desired state is idle
     private SystemState mSystemState = SystemState.IDLE;
     private WantedState mWantedState = WantedState.IDLE;
-
-    private double mCurrentStateStartTime;
-    private boolean mStateChanged;
+    
+    private double mCurrentStateStartTime; //time isnce current ste was switched to
+    private boolean mStateChanged; //true if state is changed
 
     private Loop mLoop = new Loop() {
         @Override
         public void onStart(double timestamp) {
             stop();
-            synchronized (Intake.this) {
+            synchronized (Intake.this) { //Make all the following code excecute in sequence. equivalent to C#'s Lock() block 
                 mSystemState = SystemState.IDLE;
                 mStateChanged = true;
                 mCurrentStateStartTime = timestamp;
-            }
+            } //Disenggae thread-lock
         }
 
         @Override
         public void onLoop(double timestamp) {
              
-            hopperSense(timestamp);
+            hopperSense(timestamp); //Check if hopper is full
             
-            synchronized (Intake.this) {
+            synchronized (Intake.this) { //Engage Threadlock
                 SystemState newState;
-                switch (mSystemState) {
-                case IDLE:
+                switch (mSystemState) { //Oh boy here we go
+                case IDLE: //Switch to IDLE
                     newState = handleIdle();
                     break;
-                case UNJAMMING:
+                case UNJAMMING: //Switch to UNJAMMING and give it the timestamp and curnt state duration
                     newState = handleUnjamming(timestamp, mCurrentStateStartTime);
                     break;                
-                case ACCUMULATING:
+                case ACCUMULATING: //Switch to ACCUMULATING
                     newState = handleAccumulating();
                     break;                 
-                default:
+                default: //IDLE is deafult
                     newState = SystemState.IDLE;
                 }
                 if (newState != mSystemState) {
