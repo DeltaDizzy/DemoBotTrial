@@ -94,10 +94,10 @@ public class Intake extends Subsystem {
                 default: //IDLE is deafult
                     newState = SystemState.IDLE;
                 }
-                if (newState != mSystemState) {
+                if (newState != mSystemState) { //If new state is dfferent from current state
                     System.out.println("Intake state " + mSystemState + " to " + newState);
                     mSystemState = newState;
-                    mCurrentStateStartTime = timestamp;
+                    mCurrentStateStartTime = timestamp; 
                     mStateChanged = true;
                 } else {
                     mStateChanged = false;
@@ -106,19 +106,19 @@ public class Intake extends Subsystem {
         }
 
         @Override
-        public void onStop(double timestamp) {
+        public void onStop(double timestamp) { //stop the robot?
             stop();
         }
     };
 
     private double firstSenseStamp=0;
-    private boolean counting=false;
-    private boolean hopperFull=false;
-    private void hopperSense(double now) {
-        if(mIRAcross.seesBall()) {                          
-            if(counting) {
-                if (now - firstSenseStamp > Constants.kHopperSensePeriod) {
-                    hopperFull=true;                  
+    private boolean counting=false; //Is the hopper counting
+    private boolean hopperFull=false; //Is the hopper full
+    private void hopperSense(double now) { //Detect level
+        if(mIRAcross.seesBall()) { //If a ball is detected                          
+            if(counting) { //if counting is true
+                if (now - firstSenseStamp > Constants.kHopperSensePeriod) { //If it isnt a bounce
+                    hopperFull=true; //Hopper is full                  
                 }
             }else {
                 firstSenseStamp=now;
@@ -134,9 +134,21 @@ public class Intake extends Subsystem {
         return hopperFull;
     }
     
+    /* SWITCH STATEMENT EXPLANATION
+    switch (variable or expression) - checks the input to see if it is equal to the value of any case. If no case matches, it will check the default case instead
+    {
+        case 1: - if argument = 1, the code in this case runs
+        CaseIs1();
+        break;
+        
+        case 2:
+        CaseIs2();
+        break;
+    }
+    */
     private SystemState defaultStateTransfer() {
         switch (mWantedState) {
-        case INTAKE:
+        case INTAKE: //If mWantedState == INTAKE
             return SystemState.ACCUMULATING;
         case UNJAM:
             return SystemState.UNJAMMING;
@@ -145,16 +157,17 @@ public class Intake extends Subsystem {
         }
     }
 
-    private SystemState handleIdle() {
-        mRoller.set(0);
-        return defaultStateTransfer();
+    private SystemState handleIdle() { //If state is idle
+        mRoller.set(0); //Shut down rollers
+        return defaultStateTransfer(); //Call switch above
     }
 
-    private SystemState handleUnjamming(double now, double startStartedAt) {
-        mRoller.set(Constants.kIntakeUnjamPower);
+    private SystemState handleUnjamming(double now, double startStartedAt) { //Unjam method
+        mRoller.set(Constants.kIntakeUnjamPower); //Set roller speed to unjam speed as specified elsewhere
         SystemState newState = SystemState.UNJAMMING;
-        if (now - startStartedAt > Constants.kIntakeUnjamPeriod) {
-            newState = SystemState.IDLE;
+        if (now - startStartedAt > Constants.kIntakeUnjamPeriod) { /*if the current time minus the time the subsytem has been 
+running is greater than  the specified unjam time*/
+            newState = SystemState.IDLE; //set tate to idle
         }
         switch (mWantedState) {
         case INTAKE:
