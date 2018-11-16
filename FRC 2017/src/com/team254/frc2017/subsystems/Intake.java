@@ -181,16 +181,16 @@ running is greater than  the specified unjam time*/
     
 
     private SystemState handleAccumulating() {
-        if(hopperFull) {
-            mRoller.set(0);
+        if(hopperFull) { //If hopper is full
+            mRoller.set(0); //stop rollers
             System.out.println("Hopper Full");
         }else {
-            mRoller.set(Constants.kIntakePower);
+            mRoller.set(Constants.kIntakePower); //set rollers to intake speed 
         }        
-        return defaultStateTransfer();
+        return defaultStateTransfer(); //initate state transfer
     }
 
-    public synchronized void setWantedState(WantedState state) {
+    public synchronized void setWantedState(WantedState state) { //Set wanted state
         mWantedState = state;
     }
 
@@ -202,7 +202,7 @@ running is greater than  the specified unjam time*/
 
     @Override
     public void stop() {
-        setWantedState(WantedState.IDLE);
+        setWantedState(WantedState.IDLE); //Set wanted state to idle, stopping the robot
     }
 
     @Override
